@@ -1,0 +1,49 @@
+<template>
+    <lightning-card title="User Directory - REST API Dashboard" icon-name="standard:people">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium container">
+
+            <template lwc:if={isLoading}>
+                <div class="spinner-area">
+                    <lightning-spinner alternative-text="Loading data" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:elseif={errorMessage}>
+                <div class="slds-text-color_error slds-m-bottom_small">
+                    <lightning-icon icon-name="utility:error" size="x-small" variant="error"></lightning-icon>
+                    Error: {errorMessage}
+                </div>
+                <lightning-button label="Retry" variant="brand" onclick={loadData}></lightning-button>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_small">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input type="search" label="Search by name, email or company"
+                            value={searchTerm} onchange={handleSearch}></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-combobox label="City" value={selectedCity}
+                            options={cityOptions} onchange={handleCity}></lightning-combobox>
+                    </div>
+                </div>
+
+                <div class="slds-m-bottom_small stats">
+                    <strong>Users shown:</strong> {resultCount} of {totalCount}
+                </div>
+
+                <template lwc:if={hasResults}>
+                    <lightning-datatable key-field="id" data={filteredUsers} columns={columns}
+                        sorted-by={sortedBy} sorted-direction={sortDirection}
+                        onsort={handleSort} hide-checkbox-column></lightning-datatable>
+                </template>
+                <template lwc:else>
+                    <div class="slds-text-align_center slds-p-around_large slds-text-color_weak">
+                        <lightning-icon icon-name="utility:search" size="small"></lightning-icon>
+                        <p>No users match your search. Try a different keyword or city.</p>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
